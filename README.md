@@ -1,6 +1,10 @@
-README
+# Minatar Monitar
 
-This is a simple application to monitor a computer via a server. 
+This is a simple application for executing an external connection on login and logout for community computers. 
+Runs in python in this one file, no PIP libraries needed. 
+Still a WIP (Work In Progess), so feel free to report any errors or sugestion here.
+
+--Anthony Smith
 
 # Config
 
