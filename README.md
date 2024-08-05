@@ -19,8 +19,8 @@ Example:
     "HTTP-GET": {
         "URI": "http://127.0.0.1:8080",
         "FORMS": {
-            "Login": "http-get login name $[THIS_NAME], ip $[THIS_IP], user $[THIS_USER]",
-            "Logout": "http-get logout name $[THIS_NAME], ip $[THIS_IP], user $[THIS_USER]"
+            "Login": "name=$[THIS_NAME]&ip=$[THIS_IP]&user=$[THIS_USER]&type=login",
+            "Logout": "name=$[THIS_NAME]&ip=$[THIS_IP]&user=$[THIS_USER]&type=logout"
         }
     },
     "HTTP-POST": {
