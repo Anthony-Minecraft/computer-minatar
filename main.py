@@ -11,29 +11,51 @@ import sys
 import socket
 import json
 import os
+from urllib import request, parse
 ### CLASSES ###
+class TCPTarget:
+    def __init__(self, target:dict) -> None:
+        self.IP:str = target['IP']
+        self.PORT:int = target['PORT'] or 0
+        self.FORMS:dict = target['FORMS']
+class HTTPTarget:
+    def __init__(self, target:dict) -> None:
+        self.URI:str = target['URI']
+        self.FORMS:dict = target['FORMS']
 class Clientier:
-    def __init__(self, target_ip:str, target_port:int) -> None:
+    def __init__(self, target:dict) -> None:
         # External TCP Connection Parameters
-        self.TARGET_IP:str = target_ip
-        self.TARGET_PORT:int = target_port
-        self.BUFFER_SIZE:int = 1024
+        self.Types = {
+            "TCP": TCPTarget(target['TCP']),
+            "HTTP-GET": HTTPTarget(target['HTTP-GET']),
+            "HTTP-POST": HTTPTarget(target['HTTP-POST'])
+        }
         # Computer/User Information
-        self.COMPUTER_NAME:str = platform.node()
-        self.MY_IP:str = socket.gethostbyname(socket.gethostname())
-        self.USER:str = os.getlogin()
-    def Login(self) -> None:
+        self.INFO:dict = {
+            "THIS_NAME": platform.node(),
+            "THIS_IP": socket.gethostbyname(socket.gethostname()),
+            "THIS_USER": os.getlogin()
+        }
+    def Fire(self, sendingType:str, formType:str) -> None:
         # TODO: Implement login
-        print(f"Logging in as {self.USER}@{self.MY_IP}") # DEBUG
+        match sendingType:
+            case "TCP":
+                formated:str = self.FormatString(self.Types['TCP'].FORMS[formType])
+                print(formated) # DEBUG
+                self.SendDataTCP(formated)
+            case "HTTP-GET":
+                print(self.FormatString(self.Types['HTTP-GET'].FORMS[formType])) # DEBUG
+            case "HTTP-POST":
+                print(self.FormatString(self.Types['HTTP-POST'].FORMS[formType])) # DEBUG
         pass
-    def Logout(self) -> None:
-        # TODO: Implement logout
-        print(f"Logging out of {self.USER}@{self.MY_IP}") # DEBUG
-        pass
+    def FormatString(self, form) -> str:
+        for key, value in self.INFO.items():
+            form = form.replace(f"$[{key}]", value)
+        return form
     def SendDataTCP(self, data:str) -> bytes:
         # Send data out
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a socket object
-        adr:tuple = (self.TARGET_IP, self.TARGET_PORT) # Create a tuple with the target IP and port
+        adr:tuple = (self.Types['TCP'].IP, self.Types['TCP'].PORT) # Create a tuple with the target IP and port
         s.connect(adr) # Connect to the target IP and port
         s.send(data) # Send the data
         # Process incoming data
@@ -41,33 +63,38 @@ class Clientier:
         s.close() # Close the socket
         return incoming # Return the incoming data
         # NOTE: More on sockets: https://wiki.python.org/moin/TcpCommunication
+    def SendDataHTTPGet(self, data:str) -> str:
+        contents:str = request.urlopen(f"{self.Types['HTTP-GET'].URI}?{data}").read()
+        return contents
+    def SendDataHTTPPost(self) -> str:
+        data = parse.urlencode(data).encode()
+        req =  request.Request(f"{self.Types['HTTP-GET'].URI}?{data}", data=self.INFO)
+        resp = request.urlopen(req)
+        return resp.read().decode("utf-8")
 ### MAIN ###
-if (__name__ == "__main__") and シ:
+def main() -> None:
     # Get config data
     target = None
     with open("config.json", "r") as f:
         target = json.load(f)
-    client:Clientier = Clientier(target['IP'], target['PORT']) # Create client object
+    client:Clientier = Clientier(target) # Create client object
     args:list[str] = sys.argv # Get command line arguments
-    if "login" in args:
-        client.Login()
-    elif "logout" in args:
-        client.Logout()
+    # Check if TCP or HTTP
+    sendingType:str
+    if "TCP" in args: sendingType = "TCP"
+    elif "HTTP-GET" in args: sendingType = "HTTP-GET"
+    elif "HTTP-POST" in args: sendingType = "HTTP-POST"
     else:
-        print("ERROR: Invalid arguments (missing login or logout?)")
-### EXAMPLE USAGE ###
-#
-# working_dirrectory:
-# |- main.py
-# |- config.json
-#
-# config.json:
-# {
-#     "IP": "127.0.0.1",
-#     "PORT": 8080
-# }
-#
-# command line:
-# python main.py login
-# python main.py logout
-#
+        print("ERROR: Invalid arguments (missing <TCP|HTTP-GET|HTTP-POST>?)")
+        return
+    # Check if login or logout
+    if "login" in args:
+        client.Fire(sendingType, "Login")
+    elif "logout" in args:
+        client.Fire(sendingType, "Logout")
+    else:
+        print("ERROR: Invalid arguments (missing <login|logout>?)")
+        return
+
+if (__name__ == "__main__") and シ:
+    main()
