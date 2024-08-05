@@ -62,6 +62,6 @@ Here are the accepted variables:
 
 For the HTTP requests, there is a special syntax that they should follow. 
 This should reflect the text that follows the question mark. 
-An acceptable example is `name=foo&age=bar` 
+An acceptable example is `name=$[THIS_NAME]&ip=$[THIS_IP]` 
 Note that for HTTP-POST, it will automatically send all the user data in a json post package, 
 so the GET data is not nececarily needed, however you may opt to use it anyways.
