@@ -70,3 +70,11 @@ An acceptable example is `name=$[THIS_NAME]&ip=$[THIS_IP]`
 Note that for HTTP-POST, it will automatically send all the user data in a json post package, 
 so the GET data is not used. However, for the current state, you cannot forget to add the FORMS 
 data for HTTP-POST.
+
+# Running the File
+
+To run the file, there are two arguments that need to be passed, else an error will occure. 
+The first set of option tells the program what Internet Protocall will be used. 
+It can be set to `TCP`, `HTTP-GET`, or `HTTP-POST`.
+The second option is weather you are sending the login or logout command, by passing in 
+`login` or `logout`. Example usage: `python main.py TCP login`.
