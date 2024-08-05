@@ -64,11 +64,11 @@ class Clientier:
         return incoming # Return the incoming data
         # NOTE: More on sockets: https://wiki.python.org/moin/TcpCommunication
     def SendDataHTTPGet(self, data:str) -> str:
-        contents:str = request.urlopen(f"{self.Types['HTTP-GET'].URI}?{data}").read()
+        contents:str = request.urlopen(f"{self.Types['HTTP-GET'].URI}?client=minatar&{data}").read()
         return contents
     def SendDataHTTPPost(self) -> str:
-        data = parse.urlencode(data).encode()
-        req =  request.Request(f"{self.Types['HTTP-GET'].URI}?{data}", data=self.INFO)
+        dataBytes = parse.urlencode(self.INFO).encode()
+        req =  request.Request(f"{self.Types['HTTP-GET'].URI}?client=minatar", data=dataBytes)
         resp = request.urlopen(req)
         return resp.read().decode("utf-8")
 ### MAIN ###

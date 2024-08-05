@@ -26,8 +26,8 @@ Example:
     "HTTP-POST": {
         "URI": "http://127.0.0.1:8080",
         "FORMS": {
-            "Login": "http-post login name $[THIS_NAME], ip $[THIS_IP], user $[THIS_USER]",
-            "Logout": "http-post logout name $[THIS_NAME], ip $[THIS_IP], user $[THIS_USER]"
+            "Login": "",
+            "Logout": ""
         }
     }
 }
@@ -64,4 +64,5 @@ For the HTTP requests, there is a special syntax that they should follow.
 This should reflect the text that follows the question mark. 
 An acceptable example is `name=$[THIS_NAME]&ip=$[THIS_IP]` 
 Note that for HTTP-POST, it will automatically send all the user data in a json post package, 
-so the GET data is not nececarily needed, however you may opt to use it anyways.
+so the GET data is not used. However, for the current state, you cannot forget to add the FORMS 
+data for HTTP-POST.
